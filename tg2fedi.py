@@ -242,7 +242,12 @@ def main():
         for u in updates:
             st["offset"] = u["update_id"] + 1
             p = u.get("channel_post")
-            if not p or not is_ours(p["chat"]):
+            if not p:
+                log.info("update without channel_post: %s", list(u.keys()))
+                continue
+            if not is_ours(p["chat"]):
+                log.info("foreign channel: id=%s username=%s (expected %s)",
+                         p["chat"].get("id"), p["chat"].get("username"), TG_CHANNEL)
                 continue
             if "rich_message" in p:
                 log.info("post %s: rich message, skipping", p["message_id"])
